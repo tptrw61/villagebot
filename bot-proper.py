@@ -45,10 +45,11 @@ def getChannel(client, channelName):
 
 async def check(blogChannel, sermonChannel):
     lastCheck = datetime.utcnow()
+    lastSermon = None
     log('Init', "'lastCheck' initialized to " + lastCheck.isoformat())
     while lastSermon == None:
         try:
-            sermon = getJSON(BUZZSPROUT_URL)
+            sermon = rss.getJSON(BUZZSPROUT_URL)
             if sermon.code == 200:
                 lastSermon = sermon.data[0]['guid']
             else:
