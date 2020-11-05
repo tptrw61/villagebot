@@ -78,3 +78,20 @@ def getModifiedSinceJSON(url, date):
         return ResponseTuple(json.loads(r.text), 200, r.reason)
 
     return ResponseTuple(None, r.status_code, r.reason)
+def getJSON(url):
+    if not type(url) is str:
+        raise TypeError("url must be a string")
+
+    r = requests.get(url)
+    
+    #for now ignore errors
+    if not r.ok:
+        pass
+
+    if r.status_code == 304:
+        return ResponseTuple(None, 304, r.reason)
+
+    if r.status_code == 200:
+        return ResponseTuple(json.loads(r.text), 200, r.reason)
+
+    return ResponseTuple(None, r.status_code, r.reason)

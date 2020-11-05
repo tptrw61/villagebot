@@ -46,6 +46,16 @@ def getChannel(client, channelName):
 async def check(blogChannel, sermonChannel):
     lastCheck = datetime.utcnow()
     log('Init', "'lastCheck' initialized to " + lastCheck.isoformat())
+    while lastSermon == None:
+        try:
+            sermon = getJSON(BUZZSPROUT_URL)
+            if sermon.code == 200:
+                lastSermon = sermon.data[0]['guid']
+            else:
+                log('Warning', 'Sermon: ' + str(sermon.code) + ' ' + sermon.reason)
+        except:
+            log('Error', 'Check internet connenction')
+    log('Init', "'lastSermon' initialized to " + str(lastSermon))
     while True:
         await asyncio.sleep(3600)
         log('Note', 'Checking blog...')
