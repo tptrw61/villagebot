@@ -33,6 +33,7 @@ sermonPosted = True #checks if this weeks sermon has been posted yet
 
 blogChannel = None #getChannel(client, 'villager-writing')
 sermonChannel = None #getChannel(client, 'sermons')
+lastSermon = None #last sermon id
 
 #utility functions
 def getChannel(client, channelName):
@@ -50,7 +51,7 @@ async def check(blogChannel, sermonChannel):
         log('Note', 'Checking blog...')
         try:
             blog = rss.getModifiedSinceRSS(BLOG_URL, lastCheck)
-##            sermon = rss.getModifiedSinceJSON(BUZZSPROUT_URL, lastCheck)
+            sermon = rss.getModifiedSinceJSON(BUZZSPROUT_URL, lastCheck)
             newCheckDate = datetime.utcnow()
             #log('Note', 'Done checking')
             if blog.code == 200:
@@ -62,6 +63,22 @@ async def check(blogChannel, sermonChannel):
                 log('Note', 'No new posts')
             else:
                 log('Warning', 'Blog: ' + str(blog.code) + ' ' + blog.reason)
+
+            #sermon part
+            if sermon.code == 200:
+                i = 0
+                newId = sermon.data[0]['guid']
+                sermonList = []
+                while not (sermon[i].data[i]['guid'] == lastSermon):
+                    sermonList.append(sermon.data[i]['audio_url'][:-4])
+                    await sermonChannel.send(sermonList[-1])
+                    i += 1
+                lastSermon = newId
+                logl('Note', 'Found ' + i + ' new sermons', sermonList)
+            elif sermon.code == 304:
+                log('Note', 'No new sermons')
+            else:
+                log('Warning', 'Sermon: ' + str(sermon.code) + ' ' + sermon.reason)
         except:
             log('Error', 'Check internet connenction')
         
@@ -83,6 +100,7 @@ async def check(blogChannel, sermonChannel):
 ##            log('Note', 'No new sermons')
 ##        else:
 ##            log('Warning', 'Sermon: ' + str(sermon.code) + ' ' + sermon.reason)
+            
         lastCheck = newCheckDate
 
 
