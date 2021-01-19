@@ -6,13 +6,18 @@ import requests
 import time
 import rss #my rss module
 import asyncio
+import sys
+
+tokenPath = './'
+if len(sys.argv) >= 2:
+    tokenPath = sys.argv[1] + '/'
 
 #constants
 DISCORD_TOKEN = ''
 BUZZSPROUT_TOKEN = ''
-with open('discord_token.txt', 'r') as f:
+with open(tokenPath + 'discord_token.txt', 'r') as f:
     DISCORD_TOKEN = f.read().rstrip()
-with open('buzzsprout_token.txt', 'r') as f:
+with open(tokenPath + 'buzzsprout_token.txt', 'r') as f:
     BUZZSPROUT_TOKEN = f.read().rstrip()
 
 LOG_FILE = 'village-bot.log'
